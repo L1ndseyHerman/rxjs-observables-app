@@ -1,4 +1,11 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 
 import { interval, map } from 'rxjs';
 
@@ -8,10 +15,17 @@ import { interval, map } from 'rxjs';
   templateUrl: './app.component.html',
 })
 export class AppComponent implements OnInit {
+  clickCount = signal(0);
   private destroyRef = inject(DestroyRef);
 
+  constructor() {
+    effect(() => {
+      console.log(`Clicked button ${this.clickCount()} times.`);
+    });
+  }
+
   ngOnInit(): void {
-    const subscription = interval(1000)
+    /* const subscription = interval(1000)
       .pipe(map((val) => val * 2))
       .subscribe({
         next: (val) => console.log(val),
@@ -19,6 +33,10 @@ export class AppComponent implements OnInit {
 
     this.destroyRef.onDestroy(() => {
       subscription.unsubscribe();
-    });
+    }); */
+  }
+
+  onClick() {
+    this.clickCount.update((prevCount) => prevCount + 1);
   }
 }
